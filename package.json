@@ -1,0 +1,27 @@
+{
+  "name": "sandbox_hasura_webhook",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "repository": "ivansglazunov/sandbox_hasura_webhook",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^12.12.7",
+    "apollo-boost": "^0.4.4",
+    "apollo-client": "^2.6.4",
+    "apollo-link-ws": "^1.0.19",
+    "express": "^4.17.1",
+    "graphql": "^14.5.8",
+    "graphql-tag": "^2.10.1",
+    "lodash": "^4.17.15",
+    "node-fetch": "^2.6.0",
+    "passport": "^0.4.0",
+    "passport-http-bearer": "^1.0.1",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.3",
+    "uniqid": "^5.1.0"
+  }
+}

@@ -1,0 +1,75 @@
+import _ from 'lodash';
+import { HttpLink, InMemoryCache } from 'apollo-boost';
+import ApolloClient from 'apollo-client';
+import { ApolloLink, concat, split } from 'apollo-link';
+import fetch from 'node-fetch';
+
+export function generateHeaders(options: IOptions) {
+  const headers = {
+    ...(options.secret
+      ? {
+          'x-hasura-admin-secret': `${options.secret}`,
+        }
+      : options.token
+      ? {
+          Authorization: `Bearer ${options.token}`,
+        }
+      : {}),
+    ...options.headers,
+  };
+  return headers;
+};
+
+interface IOptions {
+  secret?: string | void;
+  token?: string | void;
+  headers?: { [key: string]: any };
+  path?: string | void;
+}
+
+// TODO token and secret
+
+/**
+ * Generate ApolloClient with ssr and subscriptions support.
+ * @description
+ * By default create anonmous connection.
+ * You can provide token for Authorization Bearer or secret for x-hasura-admin-secret headers.
+ * Attention! token and secret disabled!
+ * @param {object} initialState
+ * @param {object} options
+ * @param {string=} options.token
+ * @param {string=} options.secret
+ * @param {string} options.path
+ * @returns {ApolloClient} ApolloClient
+ */
+export function generateApolloClient(
+  initialState: any = {},
+  options: IOptions = {},
+): ApolloClient<any> {
+  const headers = generateHeaders(options);
+
+  const httpLink = new HttpLink({
+    uri: `https://${options.path || ''}`,
+    fetch,
+  });
+
+  const authMiddleware = new ApolloLink((operation, forward) => {
+    operation.setContext({
+      headers,
+    });
+
+    return forward(operation);
+  });
+
+  // @ts-ignore
+  const link = httpLink;
+
+  return new ApolloClient({
+    ssrMode: true,
+    link: concat(authMiddleware, link),
+    cache: new InMemoryCache({
+      freezeResults: false,
+      resultCaching: false,
+    }).restore(initialState),
+  });
+}
