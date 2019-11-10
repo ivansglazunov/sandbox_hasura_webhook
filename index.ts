@@ -8,6 +8,14 @@ import ApolloClient from 'apollo-client';
 import { selectNodeIdByString } from './gql';
 import { generateApolloClient } from './apollo-client';
 
+require('dotenv').config();
+
+const envErrors = [];
+if (!process.env.GQL_SECRET) envErrors.push('!GQL_SECRET');
+if (!process.env.GQL_PATH) envErrors.push('!GQL_PATH');
+if (!process.env.PORT) envErrors.push('!PORT');
+if (envErrors.length) throw new Error(envErrors.toString());
+
 const app = express();
 
 app.set('json spaces', 2); // number of spaces for indentation
