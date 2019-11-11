@@ -71,5 +71,15 @@ export function generateApolloClient(
       freezeResults: false,
       resultCaching: false,
     }).restore(initialState),
+    defaultOptions: {
+      watchQuery: {
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'ignore',
+      },
+      query: {
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'all',
+      },
+    },
   });
 }
