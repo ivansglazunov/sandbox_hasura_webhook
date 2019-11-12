@@ -29,13 +29,13 @@ passport.serializeUser((auth, done) => {
 
 passport.deserializeUser(async (token, done) => {
   try {
-    const nodeId = await selectNodeIdByString({
+    const id = await selectNodeIdByString({
       apolloClient,
       format: 'txt',
       type: 'auth_token',
       value: token,
     })
-    done(null, { token, nodeId });
+    done(null, { token, id });
   } catch(error) {
     done(error);
   }
@@ -51,15 +51,15 @@ export const ANONYMOUS_USER_ID = 'anonymous';
 passport.use(
   new BearerStrategy(async (token, done) => {
     try {
-      const nodeId = await selectNodeIdByString({
+      const id = await selectNodeIdByString({
         apolloClient,
         format: 'txt',
         type: 'auth_token',
         value: token,
       });
-      console.log('BearerStrategy', { token, nodeId });
-      if (!nodeId) return done('!nodeId');
-      return done(null, { token, nodeId });
+      console.log('BearerStrategy', { token, id });
+      if (!id) return done('!id');
+      return done(null, { token, id });
     } catch(error) {
       console.log('BearerStrategy', { error });
       done(error);
@@ -79,7 +79,7 @@ app.get(
       if (user) {
         res.status(200).json({
           'X-Hasura-Role': 'user',
-          'X-Hasura-User-Id': `${user.nodeId}`,
+          'X-Hasura-User-Id': `${user.id}`,
         });
       } else {
         res.status(200).json({
